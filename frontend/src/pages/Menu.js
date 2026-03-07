@@ -1,26 +1,27 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
 
 function Menu() {
 
-  const [menu,setMenu] = useState([]);
+  return (
 
-  useEffect(()=>{
-    axios.get("/api/menu")
-    .then(res => setMenu(res.data))
-  },[])
+    <div className="page">
 
-  return(
-    <div>
-      <h1>Menu</h1>
+      <h1>Our Menu</h1>
 
-      {menu.map(item => (
-        <div key={item.name}>
-          {item.name} - ₹{item.price}
-        </div>
-      ))}
+      <ul className="menu">
+
+        <li>Pav Bhaji</li>
+        <li>Masala Dosa</li>
+        <li>Veg Thali</li>
+        <li>Paneer Butter Masala</li>
+        <li>Biryani</li>
+
+      </ul>
+
     </div>
-  )
+
+  );
+
 }
 
 export default Menu;
