@@ -45,5 +45,5 @@ jobs:
 
       - name: Build Enquiry Service
         run: |
-          docker build -t YOUR_DOCKERHUB_USERNAME/hotel-enquiry ./services/enquiry-service
-          docker push YOUR_DOCKERHUB_USERNAME/hotel-enquiry
+          docker build -t pratik6958/hotel-enquiry ./services/enquiry-service
+          docker push pratik6958/hotel-enquiry
