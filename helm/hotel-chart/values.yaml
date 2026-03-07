@@ -1,0 +1,25 @@
+replicaCount: 1
+
+image:
+  frontend:
+    repository: pratik6958/hotel-frontend
+    tag: latest
+
+  menu:
+    repository: pratik6958/hotel-menu
+    tag: latest
+
+  order:
+    repository: pratik6958/hotel-order
+    tag: latest
+
+  enquiry:
+    repository: pratik6958/hotel-enquiry
+    tag: latest
+
+service:
+  type: ClusterIP
+
+ingress:
+  enabled: true
+  className: nginx
