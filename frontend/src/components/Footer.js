@@ -2,9 +2,12 @@ import React from "react";
 
 function Footer() {
   return (
-    <footer>
+    <footer className="footer">
+
       <p>Hotel Rajeshwari</p>
+      <p>Authentic food and great hospitality</p>
       <p>Created by Pratik Sawant</p>
+
     </footer>
   );
 }
