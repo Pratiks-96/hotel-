@@ -1,28 +1,38 @@
-from flask import Flask,request
-from prometheus_client import Counter,generate_latest
+from flask import Flask, request
+from kubernetes import client, config
 
 app = Flask(__name__)
 
-ENQUIRY_COUNT = Counter(
-'enquiry_total',
-'Total enquiries'
-)
+config.load_incluster_config()
 
-data=[]
+api = client.CustomObjectsApi()
 
-@app.route("/enquiry",methods=["POST"])
+@app.route("/api/enquiry", methods=["POST"])
 def enquiry():
 
-    body=request.json
+    data = request.json
 
-    data.append(body)
+    body = {
+        "apiVersion": "hotel.com/v1",
+        "kind": "Enquiry",
+        "metadata": {
+            "name": data["name"].lower().replace(" ","-")
+        },
+        "spec": {
+            "name": data["name"],
+            "phone": data["phone"],
+            "message": data["message"]
+        }
+    }
 
-    ENQUIRY_COUNT.inc()
+    api.create_namespaced_custom_object(
+        group="hotel.com",
+        version="v1",
+        namespace="default",
+        plural="enquiries",
+        body=body
+    )
 
-    return {"status":"saved"}
-
-@app.route("/metrics")
-def metrics():
-    return generate_latest()
+    return {"status":"created"}
 
 app.run(host="0.0.0.0",port=5000)
