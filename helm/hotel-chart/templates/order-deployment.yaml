@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: order
+
+spec:
+  replicas: {{ .Values.replicaCount }}
+
+  selector:
+    matchLabels:
+      app: order
+
+  template:
+    metadata:
+      labels:
+        app: order
+
+    spec:
+      containers:
+        - name: order
+          image: "{{ .Values.image.order.repository }}:{{ .Values.image.order.tag }}"
+
+          ports:
+            - containerPort: 5000
