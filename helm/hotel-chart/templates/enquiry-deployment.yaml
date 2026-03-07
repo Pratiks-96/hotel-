@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: enquiry
+
+spec:
+  replicas: {{ .Values.replicaCount }}
+
+  selector:
+    matchLabels:
+      app: enquiry
+
+  template:
+    metadata:
+      labels:
+        app: enquiry
+
+    spec:
+      containers:
+        - name: enquiry
+          image: "{{ .Values.image.enquiry.repository }}:{{ .Values.image.enquiry.tag }}"
+
+          ports:
+            - containerPort: 5000
