@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: menu
+
+spec:
+  replicas: {{ .Values.replicaCount }}
+
+  selector:
+    matchLabels:
+      app: menu
+
+  template:
+    metadata:
+      labels:
+        app: menu
+
+    spec:
+      containers:
+        - name: menu
+          image: "{{ .Values.image.menu.repository }}:{{ .Values.image.menu.tag }}"
+
+          ports:
+            - containerPort: 5000
