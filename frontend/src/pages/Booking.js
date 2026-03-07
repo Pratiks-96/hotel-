@@ -1,40 +1,54 @@
 import React, { useState } from "react";
-import axios from "axios";
 
-function Booking(){
+function Booking() {
 
-  const [name,setName]=useState("")
-  const [event,setEvent]=useState("")
+  const [name,setName] = useState("")
+  const [phone,setPhone] = useState("")
+  const [message,setMessage] = useState("")
 
-  const submit=()=>{
+  const submitForm = async () => {
 
-    axios.post("/api/enquiry",{
-      name:name,
-      event:event
+    await fetch("/api/enquiry",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        name,
+        phone,
+        message
+      })
     })
+
+    alert("Booking Submitted!")
 
   }
 
-  return(
-    <div>
+  return (
 
-      <h1>Function Booking</h1>
+    <div className="page">
+
+      <h1>Table Booking</h1>
 
       <input
-      placeholder="Name"
-      onChange={e=>setName(e.target.value)}
+        placeholder="Name"
+        onChange={e=>setName(e.target.value)}
       />
 
       <input
-      placeholder="Event"
-      onChange={e=>setEvent(e.target.value)}
+        placeholder="Phone"
+        onChange={e=>setPhone(e.target.value)}
       />
 
-      <button onClick={submit}>
-        Send Enquiry
-      </button>
+      <textarea
+        placeholder="Message"
+        onChange={e=>setMessage(e.target.value)}
+      />
+
+      <button onClick={submitForm}>Submit</button>
 
     </div>
+
   )
 
 }
