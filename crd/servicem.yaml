@@ -8,12 +8,11 @@ metadata:
 spec:
   selector:
     matchLabels:
-      "app.kubernetes.io/managed-by": "Helm"  # quote this!
+      app: menu
   namespaceSelector:
     matchNames:
       - default
   endpoints:
-    - port: http
-      path: /menu/metrics
-      interval: 15s
-      scrapeTimeout: 10s
+  - port: http
+    path: /menu/metrics
+    interval: 15s
