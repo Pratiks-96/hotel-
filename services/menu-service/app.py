@@ -1,29 +1,33 @@
-from flask import Flask,jsonify
-from prometheus_client import Counter,generate_latest
+from flask import Flask, jsonify, Response
+from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
 
 app = Flask(__name__)
 
-REQUEST_COUNT = Counter(
+# Prometheus counter for menu requests
+MENU_REQUEST_COUNT = Counter(
     'menu_requests_total',
-    'Menu Requests'
+    'Total number of menu requests'
 )
 
+# Sample menu
 menu = [
- {"name":"Paneer Butter Masala","price":220},
- {"name":"Veg Biryani","price":180},
- {"name":"Masala Dosa","price":120}
+    {"name": "Paneer Butter Masala", "price": 220},
+    {"name": "Veg Biryani", "price": 180},
+    {"name": "Masala Dosa", "price": 120}
 ]
 
+# Endpoint to get menu
 @app.route("/menu")
 def get_menu():
-
-    REQUEST_COUNT.inc()
-
+    MENU_REQUEST_COUNT.inc()  # Increment counter on each request
     return jsonify(menu)
 
-
+# Metrics endpoint for Prometheus
 @app.route("/menu/metrics")
 def metrics():
-    return generate_latest()
+    # Set proper MIME type for Prometheus scraping
+    return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
 
-app.run(host="0.0.0.0",port=5000)
+# Run the app
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
