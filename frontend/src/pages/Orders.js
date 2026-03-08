@@ -1,12 +1,17 @@
-import React from "react";
+<section id="orders">
 
-function Orders(){
-  return(
-    <div>
-      <h1>Orders</h1>
-      <p>Place food orders from menu</p>
-    </div>
-  )
-}
+<h2>Food Order</h2>
 
-export default Orders;
+<form id="orderForm">
+
+<input type="text" id="name" placeholder="Customer Name" required>
+
+<input type="text" id="phone" placeholder="Phone Number" required>
+
+<textarea id="message" placeholder="Order Details (Pizza, Biryani, etc)"></textarea>
+
+<button type="submit">Place Order</button>
+
+</form>
+
+</section>
