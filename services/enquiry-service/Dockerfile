@@ -2,7 +2,7 @@ FROM python:3.10
 
 WORKDIR /app
 
-RUN pip install flask prometheus_client
+RUN pip install -r requirements.txt
 
 COPY app.py .
 
