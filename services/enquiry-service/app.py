@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from kubernetes import client, config
+import uuid
 
 app = Flask(__name__)
 
@@ -35,14 +36,16 @@ def create_enquiry():
 
     data = request.json
 
-    # detect purpose
     purpose = detect_purpose(data["message"])
+
+    # generate unique name
+    enquiry_name = data["name"].lower().replace(" ", "-") + "-" + str(uuid.uuid4())[:5]
 
     body = {
         "apiVersion": "hotel.com/v1",
         "kind": "Enquiry",
         "metadata": {
-            "name": data["name"].lower().replace(" ", "-")
+            "name": enquiry_name
         },
         "spec": {
             "name": data["name"],
@@ -62,7 +65,8 @@ def create_enquiry():
 
     return jsonify({
         "status": "created",
-        "purpose": purpose
+        "purpose": purpose,
+        "resource_name": enquiry_name
     })
 
 
