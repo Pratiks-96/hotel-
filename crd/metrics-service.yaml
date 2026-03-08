@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: metrics-service
+  namespace: default
+spec:
+  type: NodePort
+  selector:
+    app: metrics-app   # make sure this matches your pod label
+  ports:
+    - port: 8083       # container port
+      targetPort: 8083
+      nodePort: 30083  # external port you can access
