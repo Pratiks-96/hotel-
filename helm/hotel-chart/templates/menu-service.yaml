@@ -1,13 +1,17 @@
 apiVersion: v1
 kind: Service
-
 metadata:
   name: menu-service
-
+  namespace: default
+  labels:
+    app: menu
+    app.kubernetes.io/managed-by: Helm
 spec:
+  type: ClusterIP
   selector:
     app: menu
-
   ports:
-    - port: 80
+    - name: http
+      port: 80
+      protocol: TCP
       targetPort: 5000
