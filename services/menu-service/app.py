@@ -22,7 +22,7 @@ def get_menu():
     return jsonify(menu)
 
 
-@app.route("/metrics")
+@app.route("/menu/metrics")
 def metrics():
     return generate_latest()
 
