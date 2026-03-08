@@ -1,51 +1,54 @@
 from flask import Flask, request, jsonify
 from kubernetes import client, config
-import uuid
+from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
 
 app = Flask(__name__)
 
-# Load Kubernetes in-cluster config
+# Kubernetes config
 config.load_incluster_config()
-
 api = client.CustomObjectsApi()
 
+# -----------------------
+# Prometheus metrics
+# -----------------------
+# Total number of orders received
+ORDERS_COUNTER = Counter('orders_received_total', 'Total number of orders received')
 
-# PURPOSE DETECTION FUNCTION
+# Total orders by purpose
+ORDERS_BY_PURPOSE = Counter('orders_by_purpose_total', 'Orders grouped by purpose', ['purpose'])
+
+# -----------------------
+# Purpose detection
+# -----------------------
 def detect_purpose(message):
-
     msg = message.lower()
-
     if "wedding" in msg or "function" in msg or "party" in msg:
         return "event-booking"
-
     if "catering" in msg:
         return "catering"
-
     if "order" in msg or "biryani" in msg or "pizza" in msg:
         return "food-order"
-
     if "table" in msg or "reservation" in msg:
         return "table-booking"
-
     return "general-enquiry"
 
-
-# CREATE ENQUIRY
+# -----------------------
+# Create order/enquiry
+# -----------------------
 @app.route("/api/enquiry", methods=["POST"])
 def create_enquiry():
-
     data = request.json
-
     purpose = detect_purpose(data["message"])
 
-    # generate unique name
-    enquiry_name = data["name"].lower().replace(" ", "-") + "-" + str(uuid.uuid4())[:5]
+    # Increment Prometheus counters
+    ORDERS_COUNTER.inc()
+    ORDERS_BY_PURPOSE.labels(purpose=purpose).inc()
 
     body = {
         "apiVersion": "hotel.com/v1",
         "kind": "Enquiry",
         "metadata": {
-            "name": enquiry_name
+            "name": data["name"].lower().replace(" ", "-")
         },
         "spec": {
             "name": data["name"],
@@ -55,25 +58,26 @@ def create_enquiry():
         }
     }
 
-    api.create_namespaced_custom_object(
-        group="hotel.com",
-        version="v1",
-        namespace="default",
-        plural="enquiries",
-        body=body
-    )
+    try:
+        api.create_namespaced_custom_object(
+            group="hotel.com",
+            version="v1",
+            namespace="default",
+            plural="enquiries",
+            body=body
+        )
+    except client.exceptions.ApiException as e:
+        # If resource already exists, ignore
+        if e.status != 409:
+            raise
 
-    return jsonify({
-        "status": "created",
-        "purpose": purpose,
-        "resource_name": enquiry_name
-    })
+    return jsonify({"status": "created", "purpose": purpose})
 
-
-# GET ALL ENQUIRIES
+# -----------------------
+# Get all enquiries
+# -----------------------
 @app.route("/api/enquiries", methods=["GET"])
 def get_enquiries():
-
     enquiries = api.list_namespaced_custom_object(
         group="hotel.com",
         version="v1",
@@ -82,7 +86,6 @@ def get_enquiries():
     )
 
     results = []
-
     for item in enquiries["items"]:
         results.append({
             "name": item["spec"]["name"],
@@ -93,7 +96,15 @@ def get_enquiries():
 
     return jsonify(results)
 
+# -----------------------
+# Prometheus metrics endpoint
+# -----------------------
+@app.route("/order/metrics")
+def metrics():
+    return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
 
-# RUN APP
+# -----------------------
+# Run Flask app
+# -----------------------
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=8083)
