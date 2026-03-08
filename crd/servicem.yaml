@@ -4,7 +4,7 @@ metadata:
   name: menu-service-monitor
   namespace: monitoring
   labels:
-    Release: prometheus   # IMPORTANT: capital R
+    Release: prometheus
 spec:
   selector:
     matchLabels:
