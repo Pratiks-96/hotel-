@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Hotel Owner Dashboard</title>
+<style>
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+th, td {
+  border: 1px solid black;
+  padding: 8px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Customer Enquiries</h2>
+
+<table id="enquiryTable">
+<tr>
+<th>Name</th>
+<th>Phone</th>
+<th>Message</th>
+<th>Purpose</th>
+</tr>
+</table>
+
+<script>
+
+fetch("/api/enquiries")
+.then(response => response.json())
+.then(data => {
+
+  let table = document.getElementById("enquiryTable");
+
+  data.forEach(enq => {
+
+    let row = table.insertRow();
+
+    row.insertCell(0).innerText = enq.name;
+    row.insertCell(1).innerText = enq.phone;
+    row.insertCell(2).innerText = enq.message;
+    row.insertCell(3).innerText = enq.purpose;
+
+  });
+
+});
+
+</script>
+
+</body>
+</html>
