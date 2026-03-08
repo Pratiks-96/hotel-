@@ -1,17 +1,70 @@
-<section id="orders">
+import React, { useState } from "react";
 
-<h2>Food Order</h2>
+function Orders() {
 
-<form id="orderForm">
+const [name, setName] = useState("");
+const [phone, setPhone] = useState("");
+const [message, setMessage] = useState("");
 
-<input type="text" id="name" placeholder="Customer Name" required>
+const handleSubmit = async (e) => {
+e.preventDefault();
 
-<input type="text" id="phone" placeholder="Phone Number" required>
+const data = {
+name: name,
+phone: phone,
+message: message
+};
 
-<textarea id="message" placeholder="Order Details (Pizza, Biryani, etc)"></textarea>
+await fetch("/api/enquiry", {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify(data)
+});
+
+alert("Order Submitted!");
+
+setName("");
+setPhone("");
+setMessage("");
+};
+
+return (
+<div>
+
+<h2>Place Food Order</h2>
+
+<form onSubmit={handleSubmit}>
+
+<input
+type="text"
+placeholder="Name"
+value={name}
+onChange={(e)=>setName(e.target.value)}
+required
+/>
+
+<input
+type="text"
+placeholder="Phone"
+value={phone}
+onChange={(e)=>setPhone(e.target.value)}
+required
+/>
+
+<textarea
+placeholder="Order Details"
+value={message}
+onChange={(e)=>setMessage(e.target.value)}
+/>
 
 <button type="submit">Place Order</button>
 
 </form>
 
-</section>
+</div>
+);
+}
+
+export default Orders;
