@@ -6,6 +6,15 @@ metadata:
 spec:
   group: hotel.com
 
+  names:
+    kind: Enquiry
+    plural: enquiries
+    singular: enquiry
+    shortNames:
+      - enq
+
+  scope: Namespaced
+
   versions:
     - name: v1
       served: true
@@ -24,12 +33,5 @@ spec:
                   type: string
                 message:
                   type: string
-
-  scope: Namespaced
-
-  names:
-    plural: enquiries
-    singular: enquiry
-    kind: Enquiry
-    shortNames:
-      - enq
+                purpose:
+                  type: string
