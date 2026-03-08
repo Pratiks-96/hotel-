@@ -26,7 +26,7 @@ def get_orders():
 
     return jsonify(orders)
 
-@app.route("/orders/metrics")
+@app.route("/metrics")
 def metrics():
     return generate_latest()
 
